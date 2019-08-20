@@ -3,9 +3,7 @@ package com.demo.fund.transfer.db;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 
 import javax.sql.DataSource;
 
@@ -27,7 +25,12 @@ public class H2DBRepository extends RepositoryFactory{
 	
 	private final Object lock = new Object();
 	
-	public H2DBRepository() throws SQLException {
+	private boolean DB_SCHEMA_RESET;
+	private String DB_SCHEMA_FILE;
+	
+	public H2DBRepository(String schemaFile, boolean schemaRecreate) throws SQLException {
+		this.DB_SCHEMA_FILE = schemaFile;
+		this.DB_SCHEMA_RESET = schemaRecreate;
 		initializeDataSource();
 	}
 	
@@ -57,37 +60,16 @@ public class H2DBRepository extends RepositoryFactory{
 		return dataSource.getConnection();
 	}
 	
-	public void doTestDataSetup() {
+	
+	public void dbSchemaSetup() {
 		Connection connection = null;
-		Statement statement = null;
-		ResultSet rs = null;
-		String schemaFile = DBConfig.SCHEMA_FILE_LOCATION + DBConfig.H2_DB_TYPE + "DB-SCHEMA.sql";
 		try {
 			connection = getDBConnection();
 			
-			RunScript.execute(connection, new FileReader(schemaFile));
+			if(DB_SCHEMA_RESET)
+				RunScript.execute(connection, new FileReader(DB_SCHEMA_FILE));
 			
-			String GET_ALL_CUSTOMER_SQL = "select * from Customer";
-			
-			statement = connection.createStatement();
-			rs = statement.executeQuery(GET_ALL_CUSTOMER_SQL);
-			
-			while (rs.next()) {
-				logger.info("Test customerId: {}", rs.getString("CustomerId"));
-			}
-			rs.close();
-			statement.close();
-			
-			String GET_ALL_ACCOUNT_SQL = "select * from Account";
-			
-			statement = connection.createStatement();
-			rs = statement.executeQuery(GET_ALL_ACCOUNT_SQL);
-			
-			while (rs.next()) {
-				logger.info("Test customerId: {}, accountId: {}", rs.getString("CustomerId"), rs.getString("AccountId"));
-			}
-		
-			
+			logger.info("H2 DB Schema setup completed.");
 		} catch (SQLException | FileNotFoundException e) {
 			logger.error("Some problem while setting up test data. {}", e);
 		}
@@ -95,8 +77,6 @@ public class H2DBRepository extends RepositoryFactory{
 		finally {
 			try {
 				if(connection != null) {
-					if(rs != null) rs.close();
-					if(statement != null) statement.close();
 					connection.close();
 				}
 			} catch (SQLException e) {

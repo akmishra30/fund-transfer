@@ -39,7 +39,7 @@ public class FundTransferServiceImplTest {
 	@Before
 	public void setUp() {
 		factory = RepositoryFactory.getRepositoryFactory(DBConfig.DEFAULT_DB);
-		factory.doTestDataSetup();
+		factory.dbSchemaSetup();
 		transferService = new FundTransferServiceImpl();
 		accountRepository = new AccountRepositoryImpl(factory);
 		customerRepository = new CustomerRepositoryImpl(factory);

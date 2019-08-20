@@ -1,6 +1,6 @@
 # Fund Transfer Project
 
-This is simple fund-transfer REST project between bank accounts using JAX-RS and Jetty as an embedded server. The H2 in memory DB has been used with simple db schema where there are only two tables *customer* and *account* which holds necessary information.
+This is a REST project to transfer fund between customers bank accounts using JAX-RS and Jetty as an embedded server. The H2 DB is being used as in-memory DB which holds customers and accounts related necessary information.
 
 
 **Tech specification :**
@@ -25,6 +25,35 @@ This is simple fund-transfer REST project between bank accounts using JAX-RS and
 	- ACCOUNT (ACCOUNTID, CUSTOMERID, CURRENCYCODE, STATUS) 
 	  - PK : ACCOUNTID, FK: CUSTOMERID
   
+**Classes, interfaces, entities and exceptions :***
+	
+	- FundTransferApp.java		: Main class of the application
+	- DBConfig.java				: DB specific configuration
+	- RepositoryFactory.java		: Abstract factory class to get DB specific repository instance
+	  - H2DBRepository.java		: H2 DB specific repository class which extends the RepositoryFactory class
+	- AccountRepository.java		: Repository Interface for account related DB operations
+	  - AccountRepositoryImpl.java	: Implementation for account related DB operations
+	- CustomerRepository.java		: Repository Interface for customer related DB operations
+	  - CustomerRepositoryImpl.java: Implementation for customer related DB operations
+	- FundTransferService.java		: Interface for fund transfer related operations 
+	  - FundTransferServiceImpl.java: Implementation for fund transfer related operations
+	- DataValidator.java			: Data validator class
+	- ValidatorFactory.java		: Factory class to get specific bean validator instance
+	  - BeanValidator.java		: Abstract Bean validator class having validator method
+	  - FundTransferValidator.java	: Actual implementation of bean validation by extending BeanValidator class
+	- FundTransferController.java	: REST controller class which serves the POST requests
+	- PropertyReader.java			: Application specific property reader class
+	- APIUtil.java				: Class with utility methods
+	- APIExceptionMapper.java		: Application wide exception mapper class for various kind of API exception
+	  - APIException.java			: API Exception class
+	- JettyServer.java			: Embedded Jetty server class implementation with server initialization and startup
+	- Account.java				: Account entity class and mapped with ACCOUNT table
+	- APISuccess.java				: Entity class for final API success response
+	- Customer.java				: Customer entity class and mapped with CUSTOMER table
+	- ErrorDetail.java			: Place holder entity for bean validation for properties
+	- FundTransfer.java			: Request fund transfer entity
+	
+
 **API Constraints**
 - Fund transfer payload's fields and format:  
 	- formAccount 
@@ -34,12 +63,31 @@ This is simple fund-transfer REST project between bank accounts using JAX-RS and
 		- This must contains digits only. 
 		- The account length: min of 8 digits and max of 16 digits. 
 	- amount 
-		- This must contains digits only along with decimal point(.). 
+		- This must contains digits only along with decimal point(.) if any. 
 - Fund transfer between same account is not possible. 
 - Fund transfer will failed if any of the account not exist.
 - Fund transfer can't be possible between any of the inactive account.
 - Fund transfer can't be possible if debit account doesn't have sufficient fund.
-		 
+
+**Configurations and other settings** 
+
+This project has **src/main/resources/application.properties** file for application specific configuration like server, db and logging, etc.
+You can use *fund.transfer.default.db* key to specify default db and that db specific properties. For demo and test, I have used H2 db as default DB. The DB specific schema also you can create and execute by specifying the location with key *db.schema.file.location*. For test cases and demo I have placed the **src/main/resources/H2DB-SCHEMA.sql** with sample tables and sequence creation along with few dummy entries.
+
+	src/main/resource/application.properties
+	
+	To specify jetty server port, change below key 
+	jetty.server.port=8080
+	
+	To specify default DB of application, change below key
+	fund.transfer.default.db=H2
+	You can use MYSQL, SQLSERVER, ORACLE for future upgrade.
+	
+	To specify db schema file,
+	db.schema.file.location=src/main/resources/{DB-NAME}DB-SCHEMA.sql
+	
+	To specify db schema recreation on server startup.
+	db.schema.recreate=true
 
 ### Build and run the project
 
@@ -58,6 +106,15 @@ mvn clean install -Dmaven.test.skip=true
 ``` 
 mvn exec:java
 ```
+
+**API Endpoint**
+
+	http://localhost:8080/api/fund/transfer
+	
+	Method: POST
+	Request Headers: 
+		Content-Type: application/json
+
 
 ### API Response Code Meaning
 

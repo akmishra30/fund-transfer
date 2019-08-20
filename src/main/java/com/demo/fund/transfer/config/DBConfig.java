@@ -9,6 +9,7 @@ public class DBConfig {
 	public static final String MYSQL_DB_TYPE = "MYSQL";
 	public static final String  ORACLE_DB_TYPE = "ORACLE";
 	public static final String  SCHEMA_FILE_NAME = "DB-SCHEMA.sql";
+	public static final String SCHEMA_RECREATE = PropertyReader.getPropertyKeyValue("db.schema.recreate", "true");
 	public static final String  SCHEMA_FILE_LOCATION = PropertyReader.getPropertyKeyValue("db.schema.file.location", "src/main/resources/");
 	public static final String  DEFAULT_DB = PropertyReader.getPropertyKeyValue("fund.transfer.default.db", H2_DB_TYPE);
 	

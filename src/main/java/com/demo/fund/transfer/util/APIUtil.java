@@ -3,19 +3,13 @@ package com.demo.fund.transfer.util;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.UUID;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
 import com.demo.fund.transfer.entity.Account;
-import com.demo.fund.transfer.entity.ErrorDetail;
-import com.demo.fund.transfer.entity.FundTransfer;
 import com.demo.fund.transfer.exception.APIException;
 
 public class APIUtil {

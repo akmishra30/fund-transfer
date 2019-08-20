@@ -30,9 +30,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class FundTransferControllerTest {
 	private static final Logger logger = LoggerFactory.getLogger(APIUtil.class);
 	
-	private Server server;
-	
-	private String httpEndpoint = "http://localhost:8090/api/fund/transfer";
+	private Server server = null;
 	
 	private RepositoryFactory factory;
 	
@@ -40,8 +38,9 @@ public class FundTransferControllerTest {
 	public void setUp() {
 		try {
 			factory = RepositoryFactory.getRepositoryFactory(DBConfig.DEFAULT_DB);
-			factory.doTestDataSetup();
+			factory.dbSchemaSetup();
 			startServer();
+			
 		} catch (Exception e) {
 			logger.error("There was a problem while setting up server. {}", e);
 		}
@@ -56,7 +55,7 @@ public class FundTransferControllerTest {
 	
 	private void startServer() throws Exception {
         if (server == null) {
-            server = new Server(8090);
+            server = new Server(0); //Jetty will pick available port automatically
             ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
             context.setContextPath("/api");
             server.setHandler(context);
@@ -66,7 +65,7 @@ public class FundTransferControllerTest {
                             APIExceptionMapper.class.getCanonicalName());
             server.start();
         }
-    }
+	 }
 	
 	@Test
 	public void testSuccessfulFundTransfer() throws IOException {
@@ -74,7 +73,7 @@ public class FundTransferControllerTest {
 		Response response = postData(new FundTransfer("10000000", "10000001", "50.00"));
 		Assert.assertNotNull(response);
 		Assert.assertEquals(200, response.getCode());
-		logger.info("fund transfer with valid data has been successful.");
+		logger.info("testSuccessfulFundTransfer: fund transfer with valid data has been successful.");
 	}
 	
 	@Test
@@ -83,7 +82,7 @@ public class FundTransferControllerTest {
 		Response response = postData(new FundTransfer("1123-123-233", "10000001", "50.00"));
 		Assert.assertNotNull(response);
 		Assert.assertEquals(400, response.getCode());
-		logger.info("fund transfer with invalid data has been successful.");
+		logger.info("testInvalidAccountDataFundTransfer: fund transfer with invalid data has been successful.");
 	}
 	
 	@Test
@@ -92,7 +91,7 @@ public class FundTransferControllerTest {
 		Response response = postData(new FundTransfer("1123-123-233", "10000001", "10,000,000"));
 		Assert.assertNotNull(response);
 		Assert.assertEquals(400, response.getCode());
-		logger.info("fund transfer with invalid data has been successful.");
+		logger.info("testInvalidAmountDataFundTransfer: fund transfer with invalid data has been successful.");
 	}
 	
 	private Response postData(FundTransfer payload) throws IOException {
@@ -100,6 +99,7 @@ public class FundTransferControllerTest {
 		DataOutputStream outStream = null;
 		BufferedReader in = null;
 		HttpURLConnection conn = null;
+		String httpEndpoint  = "http://localhost:" + server.getURI().getPort() + "/api/fund/transfer";
 		try {
 			logger.info("Sending data for fund transfer: {}", payload.toString());
 			URL url = new URL(httpEndpoint);
@@ -130,17 +130,17 @@ public class FundTransferControllerTest {
             logger.info("Recieved response : {}", response.toString());
             
 		} catch (MalformedURLException e) {
-            e.printStackTrace();
+            logger.warn("URL is wrong. message : {}", e.getMessage());
         } catch (IOException e) {
-            e.printStackTrace();
+        	 logger.warn("Some exception : {}", e.getMessage());
         }
-		/*
+		
 		finally {
 			if(outStream != null) outStream.close();
 			if(in != null) in.close();
 			if(conn != null) conn.disconnect();
 		}
-		*/
+		
 		return response;
 	}
 }

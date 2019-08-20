@@ -14,7 +14,7 @@ public class FundTransferApp {
 		logger.info("Starting fund-transfer REST service.");
 		
 		RepositoryFactory factory = RepositoryFactory.getRepositoryFactory(DBConfig.DEFAULT_DB);
-		factory.doTestDataSetup();
+		factory.dbSchemaSetup();
 		
 		JettyServer server = new JettyServer();
 		server.startServer();
