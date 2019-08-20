@@ -1,8 +1,8 @@
 # Fund Transfer Project
 
-This is a REST project to transfer fund between customers bank accounts using JAX-RS and Jetty as an embedded server. The H2 DB is being used as in-memory DB which holds customers and accounts related necessary information for demo and test purpose.
+This is a **REST** project to transfer fund between customers bank accounts using **JAX-RS** and **Jetty** as an embedded server. The **H2 DB** is being used as in-memory DB which holds customers and accounts related necessary information for demo and test purpose.
 
-This project mainly focus on **fund-transfer** operation between accounts. For testing purpose, only account creation can be possible. No other operations such as account/customer deletion, account/customer retrieval, etc. available.
+This project mainly focus on **fund-transfer** operation between accounts. For testing purpose, only account creation can be possible. No other operations such as account/customer deletion, account/customer retrieval, etc. available. By default currency code is **USD** and account status is **true**.
 
 
 **Tech specification :**
@@ -82,7 +82,7 @@ This project mainly focus on **fund-transfer** operation between accounts. For t
 **Configurations and other settings** 
 
 This project has **src/main/resources/application.properties** file for application specific configuration like server, db and logging, etc.
-You can use *fund.transfer.default.db* key to specify default db and that db specific properties. For demo and test, I have used H2 db as default DB. The DB specific schema also you can create and execute by specifying the location with key *db.schema.file.location*. For test cases and demo I have placed the **src/main/resources/H2DB-SCHEMA.sql** with sample tables and sequence creation along with few dummy entries.
+You can use *fund.transfer.default.db* key to specify default db and that db specific properties. For demo and test, H2 db as default DB. The DB specific schema also you can create and execute by specifying the location with key *db.schema.file.location*. For test cases and demo, the schema file has been placed in **src/main/resources/H2DB-SCHEMA.sql** with sample tables and sequence creation along with few dummy entries.
 
 	src/main/resource/application.properties
 	
@@ -148,13 +148,14 @@ mvn exec:java
 
 
 **Response Message Structure**
+
 | Field Name | Meaning |
 | -----------| ------ |
-| message	| This field contains information about request success/failure|
-| timestamp	| This field contains date and time about server response|
-| transactionId	| Unique transaction reference number generated at server and available in server log as well|
-| code	| API failure code. Refer API response code meaning table|
-| errors	| API payload field wise data validation failure along with field name and failure reason|
+| message	| This field contains information about request success/failure |
+| timestamp	| This field contains date and time about server response |
+| transactionId	| Unique transaction reference number generated at server and available in server log as well |
+| code	| API failure code. Refer API response code meaning table |
+| errors	| API payload field wise data validation failure along with field name and failure reason |
 
 
 ### API Requests / Responses.
