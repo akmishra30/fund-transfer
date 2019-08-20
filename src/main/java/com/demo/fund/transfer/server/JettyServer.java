@@ -10,6 +10,7 @@ import org.glassfish.jersey.servlet.ServletContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.demo.fund.transfer.controller.AccountController;
 import com.demo.fund.transfer.controller.FundTransferController;
 import com.demo.fund.transfer.exception.APIExceptionMapper;
 import com.demo.fund.transfer.util.PropertyReader;
@@ -46,6 +47,7 @@ public class JettyServer {
 		servletHolder.setInitParameter(
 				"jersey.config.server.provider.classnames",
 				FundTransferController.class.getCanonicalName() + "," + 
+				AccountController.class.getCanonicalName() + "," + 
 				APIExceptionMapper.class.getCanonicalName());
 		logger.info("Jetty server initialization has been completed successfuly.");
 	}

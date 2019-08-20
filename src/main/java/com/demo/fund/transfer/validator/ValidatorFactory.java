@@ -1,5 +1,6 @@
 package com.demo.fund.transfer.validator;
 
+import com.demo.fund.transfer.entity.AccountRequest;
 import com.demo.fund.transfer.entity.FundTransfer;
 
 public class ValidatorFactory {
@@ -12,7 +13,8 @@ public class ValidatorFactory {
 		
 		if(bean.getClass().equals(FundTransfer.class))
 			validator = new FundTransferValidator(bean);
-		
+		if(bean.getClass().equals(AccountRequest.class))
+			validator = new AccountRequestValidator(bean);
 		return validator;
 	}
 }

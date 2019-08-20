@@ -1,6 +1,8 @@
 # Fund Transfer Project
 
-This is a REST project to transfer fund between customers bank accounts using JAX-RS and Jetty as an embedded server. The H2 DB is being used as in-memory DB which holds customers and accounts related necessary information.
+This is a REST project to transfer fund between customers bank accounts using JAX-RS and Jetty as an embedded server. The H2 DB is being used as in-memory DB which holds customers and accounts related necessary information for demo and test purpose.
+
+This project mainly focus on **fund-transfer** operation between accounts. For testing purpose, only account creation can be possible. No other operations such as account/customer deletion, account/customer retrieval, etc. available.
 
 
 **Tech specification :**
@@ -10,7 +12,7 @@ This is a REST project to transfer fund between customers bank accounts using JA
 	3. H2 DB - In memory DB (v1.4.199) 
 	4. Jetty (9.2.3.v20140905) 
 	5. Glassfish-Jersey (2.7) 
-	6. Hikari (v3.3.1) 
+	6. HikariCP (v3.3.1) 
 	7. Jackson (v2.9.9) 
 	8. Self4J (v1.7.28) 
 	7. Maven - (v4.0.0) 
@@ -18,12 +20,17 @@ This is a REST project to transfer fund between customers bank accounts using JA
 	9. Mockito - (v1.10.19) 
 	10.PowerMock - (v2.0.2) 
 
-**DB Tables:**
-
+**DB Tables/Sequences:**
+	
+	Tables: 
 	- CUSTOMER (CUSTOMERID, CUSTOMERNAME, EMAIL) 
 	  - PK : CUSTOMERID
 	- ACCOUNT (ACCOUNTID, CUSTOMERID, CURRENCYCODE, STATUS) 
 	  - PK : ACCOUNTID, FK: CUSTOMERID
+	  
+	Sequences:
+		1. CUST_ID_SEQ (Initial starts from 10000000)
+		2. ACCT_ID_SEQ (Initial starts from 10000000)
   
 **Classes, interfaces, entities and exceptions :***
 	
@@ -40,8 +47,10 @@ This is a REST project to transfer fund between customers bank accounts using JA
 	- DataValidator.java		: Data validator class
 	- ValidatorFactory.java		: Factory class to get specific bean validator instance
 	  - BeanValidator.java		: Abstract Bean validator class having validator method
-	  - FundTransferValidator.java	: Actual implementation of bean validation by extending BeanValidator class
-	- FundTransferController.java	: REST controller class which serves the POST requests
+	  - FundTransferValidator.java	: Actual implementation of bean validation by extending BeanValidator class for FundTransfer
+	  - AccountRequestValidator.java: Actual implementation of bean validation by extending BeanValidator class for AccountRequest
+	- FundTransferController.java	: REST controller which serves the POST requests
+	- AccountController.java:	: REST controller for testing purpose to create an account
 	- PropertyReader.java		: Application specific property reader class
 	- APIUtil.java			: Class with utility methods
 	- APIExceptionMapper.java	: Application wide exception mapper class for various kind of API exception
@@ -51,7 +60,8 @@ This is a REST project to transfer fund between customers bank accounts using JA
 	- APISuccess.java		: Entity class for final API success response
 	- Customer.java			: Customer entity class and mapped with CUSTOMER table
 	- ErrorDetail.java		: Place holder entity for bean validation for properties
-	- FundTransfer.java		: Request fund transfer entity
+	- FundTransfer.java		: Request entity for fund transfer
+	- AccountRequest.java		: Request entity for account creation
 	
 
 **API Constraints**
@@ -109,8 +119,15 @@ mvn exec:java
 
 **API Endpoint**
 
-	http://localhost:8080/api/fund/transfer
+	Endpoint for Fund Transfer:
 	
+	URL: http://localhost:8080/api/fund/transfer
+	Method: POST
+	Request Headers: 
+		Content-Type: application/json
+		
+	Endpoint for creating an account:
+	URL: http://localhost:8080/api/account
 	Method: POST
 	Request Headers: 
 		Content-Type: application/json
@@ -130,17 +147,27 @@ mvn exec:java
 | API500 | 500 Internal Server Error| There was an internal API problem. |
 
 
+**Response Message Structure**
+| Field Name | Meaning |
+| -----------| ------ |
+| message	| This field contains information about request success/failure|
+| timestamp	| This field contains date and time about server response|
+| transactionId	| Unique transaction reference number generated at server and available in server log as well|
+| code	| API failure code. Refer API response code meaning table|
+| errors	| API payload field wise data validation failure along with field name and failure reason|
+
+
 ### API Requests / Responses.
 
 **Sample test data available in table**
 
 | CustomerID | AccountId | Balance |CurrencyCode | Status |
-| -----------| ------ | ------ | ------ |
+| -----------| ------ | ------ |  ------ | ------ |
 | 10000000 | 10000000 | 100.0000 | USD | true |
 | 10000001 | 10000001 | 200.0000 | USD | true |
 | 10000002 | 10000002 | 500.0000 | USD | false |
 
-**API Request**
+**API Request/Response for /api/fund/transfer**
 
 ``` 
 {
@@ -253,5 +280,40 @@ mvn exec:java
     "timestamp": "2019-08-20T10:22:07.926",
     "transactionId": "11f7fdc1-90d9-45f0-9c63-a2a68c925b5f"
 }
-``` 
+```
 
+**API Request/Response for /api/account**
+
+```
+{
+    "customerName": "XXX-YYY",
+    "email": "abc@test.com",
+    "initialDeposit": "10000"
+}
+```
+**Valid Payload Response: 200 OK**
+
+```
+	{
+	    "message": "Customer Id: 10000006, accountId: 10000006",
+	    "timestamp": "2019-08-20T19:44:56.452",
+	    "transactionId": "ae3e8b45-c726-4a79-9832-06a0015ac5bd"
+	}
+```
+
+**Invalid Payload Response: 400 BAD REQUEST**
+
+``` 
+{
+    "code": "API401",
+    "errors": [
+        {
+            "desc": "Invalid amount data. It must contains digits along with decimal point.",
+            "name": "initialDeposit"
+        }
+    ],
+    "message": "Payload contains data in invalid format.",
+    "timestamp": "2019-08-20T19:47:40.973",
+    "transactionId": "52f7698f-dc46-4667-be4b-fabd9c1342dc"
+}
+``` 

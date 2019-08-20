@@ -35,7 +35,6 @@ public class H2DBRepository extends RepositoryFactory{
 	}
 	
 	private void initializeDataSource() throws SQLException{
-		logger.info("Initializing a datasource");
 		
 		if(config == null)
 			config = DBConfig.getDBConfig(DBConfig.H2_DB_TYPE);

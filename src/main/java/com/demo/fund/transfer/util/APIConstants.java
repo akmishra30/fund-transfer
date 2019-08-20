@@ -17,6 +17,8 @@ public interface APIConstants {
 	public static final String FIELD_FROM_ACCOUNT = "fromAccount";
 	public static final String FIELD_TO_ACCOUNT = "toAccount";
 	public static final String FIELD_AMOUNT = "amount";
+	public static final String FIELD_DEPOSIT = "initialDeposit";
+	public static final String FIELD_STATUS = "status";
 	
 	//API Validation Constants
 	public static final String ACCOUNT_NOT_EXIST_MSG = "The given account not exist. Account no. ";

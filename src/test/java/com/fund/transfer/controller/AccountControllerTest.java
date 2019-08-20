@@ -20,15 +20,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.demo.fund.transfer.config.DBConfig;
-import com.demo.fund.transfer.controller.FundTransferController;
+import com.demo.fund.transfer.controller.AccountController;
 import com.demo.fund.transfer.db.RepositoryFactory;
-import com.demo.fund.transfer.entity.FundTransfer;
+import com.demo.fund.transfer.entity.AccountRequest;
 import com.demo.fund.transfer.exception.APIExceptionMapper;
-import com.demo.fund.transfer.util.APIUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class FundTransferControllerTest {
-	private static final Logger logger = LoggerFactory.getLogger(FundTransferControllerTest.class);
+public class AccountControllerTest {
+	private static final Logger logger = LoggerFactory.getLogger(AccountControllerTest.class);
 	
 	private Server server = null;
 	
@@ -61,45 +60,36 @@ public class FundTransferControllerTest {
             server.setHandler(context);
             ServletHolder servletHolder = context.addServlet(ServletContainer.class, "/*");
             servletHolder.setInitParameter("jersey.config.server.provider.classnames",
-            		FundTransferController.class.getCanonicalName() + "," +
+            		AccountController.class.getCanonicalName() + "," +
                             APIExceptionMapper.class.getCanonicalName());
             server.start();
         }
 	 }
 	
 	@Test
-	public void testSuccessfulFundTransfer() throws IOException {
+	public void testSuccessfulAccountCreation() throws IOException {
 		logger.info("Running fund transfer with valid data.");
-		Response response = postData(new FundTransfer("10000000", "10000001", "50.00"));
+		Response response = postData(new AccountRequest("Ashking", "ashking@test.com", "10000"));
 		Assert.assertNotNull(response);
 		Assert.assertEquals(200, response.getCode());
-		logger.info("testSuccessfulFundTransfer: fund transfer with valid data has been successful.");
+		logger.info("testSuccessfulAccountCreation: account creation with valid data has been successful.");
 	}
 	
 	@Test
-	public void testInvalidAccountDataFundTransfer() throws IOException {
+	public void testFailedAccountCreation() throws IOException {
 		logger.info("Running fund transfer with invalid data.");
-		Response response = postData(new FundTransfer("1123-123-233", "10000001", "50.00"));
+		Response response = postData(new AccountRequest("Ashking", "ashking@test.com", "$10000"));
 		Assert.assertNotNull(response);
 		Assert.assertEquals(400, response.getCode());
-		logger.info("testInvalidAccountDataFundTransfer: fund transfer with invalid data has been successful.");
+		logger.info("testFailedAccountCreation: account creation with invalid data has been successful.");
 	}
 	
-	@Test
-	public void testInvalidAmountDataFundTransfer() throws IOException {
-		logger.info("Running fund transfer with invalid data.");
-		Response response = postData(new FundTransfer("1123-123-233", "10000001", "10,000,000"));
-		Assert.assertNotNull(response);
-		Assert.assertEquals(400, response.getCode());
-		logger.info("testInvalidAmountDataFundTransfer: fund transfer with invalid data has been successful.");
-	}
-	
-	private Response postData(FundTransfer payload) throws IOException {
+	private Response postData(AccountRequest payload) throws IOException {
 		Response response = new Response();
 		DataOutputStream outStream = null;
 		BufferedReader in = null;
 		HttpURLConnection conn = null;
-		String httpEndpoint  = "http://localhost:" + server.getURI().getPort() + "/api/fund/transfer";
+		String httpEndpoint  = "http://localhost:" + server.getURI().getPort() + "/api/account";
 		try {
 			logger.info("Sending data for fund transfer: {}", payload.toString());
 			URL url = new URL(httpEndpoint);
