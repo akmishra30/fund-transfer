@@ -28,30 +28,30 @@ This is a REST project to transfer fund between customers bank accounts using JA
 **Classes, interfaces, entities and exceptions :***
 	
 	- FundTransferApp.java		: Main class of the application
-	- DBConfig.java				: DB specific configuration
-	- RepositoryFactory.java		: Abstract factory class to get DB specific repository instance
+	- DBConfig.java			: DB specific configuration
+	- RepositoryFactory.java	: Abstract factory class to get DB specific repository instance
 	  - H2DBRepository.java		: H2 DB specific repository class which extends the RepositoryFactory class
-	- AccountRepository.java		: Repository Interface for account related DB operations
+	- AccountRepository.java	: Repository Interface for account related DB operations
 	  - AccountRepositoryImpl.java	: Implementation for account related DB operations
-	- CustomerRepository.java		: Repository Interface for customer related DB operations
-	  - CustomerRepositoryImpl.java: Implementation for customer related DB operations
-	- FundTransferService.java		: Interface for fund transfer related operations 
+	- CustomerRepository.java	: Repository Interface for customer related DB operations
+	  - CustomerRepositoryImpl.java	: Implementation for customer related DB operations
+	- FundTransferService.java	: Interface for fund transfer related operations 
 	  - FundTransferServiceImpl.java: Implementation for fund transfer related operations
-	- DataValidator.java			: Data validator class
+	- DataValidator.java		: Data validator class
 	- ValidatorFactory.java		: Factory class to get specific bean validator instance
 	  - BeanValidator.java		: Abstract Bean validator class having validator method
 	  - FundTransferValidator.java	: Actual implementation of bean validation by extending BeanValidator class
 	- FundTransferController.java	: REST controller class which serves the POST requests
-	- PropertyReader.java			: Application specific property reader class
-	- APIUtil.java				: Class with utility methods
-	- APIExceptionMapper.java		: Application wide exception mapper class for various kind of API exception
-	  - APIException.java			: API Exception class
-	- JettyServer.java			: Embedded Jetty server class implementation with server initialization and startup
-	- Account.java				: Account entity class and mapped with ACCOUNT table
-	- APISuccess.java				: Entity class for final API success response
-	- Customer.java				: Customer entity class and mapped with CUSTOMER table
-	- ErrorDetail.java			: Place holder entity for bean validation for properties
-	- FundTransfer.java			: Request fund transfer entity
+	- PropertyReader.java		: Application specific property reader class
+	- APIUtil.java			: Class with utility methods
+	- APIExceptionMapper.java	: Application wide exception mapper class for various kind of API exception
+	  - APIException.java		: API Exception class
+	- JettyServer.java		: Embedded Jetty server class implementation with server initialization and startup
+	- Account.java			: Account entity class and mapped with ACCOUNT table
+	- APISuccess.java		: Entity class for final API success response
+	- Customer.java			: Customer entity class and mapped with CUSTOMER table
+	- ErrorDetail.java		: Place holder entity for bean validation for properties
+	- FundTransfer.java		: Request fund transfer entity
 	
 
 **API Constraints**
@@ -120,17 +120,25 @@ mvn exec:java
 
 | API Code | HTTP Response Code | Code Description |
 | -----------| ------ | ------ |
-|  | 200 OK | The request has succeeded |
-| API100 | 404 Not Found | The given account not exist. Account no. {ac. no} |
-| API200 | 412 Precondition Failed | The given account is not active. Account no. {ac. no} |
+| - | 200 OK | The request has succeeded |
+| API100 | 404 Not Found | The given account not exist. Account no. {ac_no} |
+| API200 | 412 Precondition Failed | The given account is not active. Account no. {ac_no} |
 | API300 | 412 Precondition Failed | The debit account doesn't have sufficient fund. |
 | API400 | 400 Bad Request | Payload is empty or null. |
 | API401 | 400 Bad Request | Payload contains data in invalid format. |
-| API402 | 400 Bad Request | The debit and credit accounts are same. |
+| API402 | 400 Bad Request | The debit and credit account number are same. |
 | API500 | 500 Internal Server Error| There was an internal API problem. |
 
 
 ### API Requests / Responses.
+
+**Sample test data available in table**
+
+| CustomerID | AccountId | Balance |CurrencyCode | Status |
+| -----------| ------ | ------ | ------ |
+| 10000000 | 10000000 | 100.0000 | USD | true |
+| 10000001 | 10000001 | 200.0000 | USD | true |
+| 10000002 | 10000002 | 500.0000 | USD | false |
 
 **API Request**
 
