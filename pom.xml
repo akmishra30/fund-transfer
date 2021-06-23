@@ -14,7 +14,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<jackson.lib.version>2.9.9</jackson.lib.version>
 		<slf4j.lib.version>1.7.28</slf4j.lib.version>
-		<jetty.lib.version>9.2.3.v20140905</jetty.lib.version>
+		<jetty.lib.version>9.4.41.v20210516</jetty.lib.version>
 		<jersey.lib.version>2.7</jersey.lib.version>
 		<HikariCP.version>3.3.1</HikariCP.version>
 		<mockito.version>2.27.0</mockito.version>
