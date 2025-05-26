@@ -38,14 +38,13 @@ public class AccountRequestValidator extends BeanValidator{
 			exception.setErrors(errors);
 			throw exception;
 		}
-		logger.error("Request payload failed in validation. {}", exception);
 				
 	}
 
 	private ErrorDetail validateAmount(String field, String amount) {
 		ErrorDetail detail = null;
 		
-		if(!APIUtil.stringNullCheck(amount)) {
+		if(!APIUtil.isStringPopulated(amount)) {
 			detail = new ErrorDetail(field, APIConstants.EMPTY_AMOUNT_MSG);
 		} else {
 			Matcher match = AMOUNT_PATTERN.matcher(amount.replaceAll(",", ""));

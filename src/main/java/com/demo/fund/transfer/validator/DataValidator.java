@@ -11,7 +11,7 @@ public class DataValidator {
 	
 	public static void validateData(Object data) throws APIException{
 		if(data == null)
-			new APIException(APIConstants.INVALID_PAYLOAD, APIConstants.EMPTY_PAYLOAD_MSG);
+			throw new APIException(APIConstants.INVALID_PAYLOAD, APIConstants.EMPTY_PAYLOAD_MSG);
 		
 		BeanValidator validator = ValidatorFactory.getBeanValidatorInstance(data);
 		validator.validateBean();

@@ -48,14 +48,13 @@ public class FundTransferValidator extends BeanValidator{
 			exception.setErrors(errors);
 			throw exception;
 		}
-		logger.error("Request payload failed in validation. {}", exception);
 				
 	}
 
 	private ErrorDetail validateAccountNo(String field, String account) {
 		ErrorDetail detail = null;
 		
-		if(!APIUtil.stringNullCheck(account)) {
+		if(!APIUtil.isStringPopulated(account)) {
 			logger.warn("Empty/null data found for field {}, value: {}", field, account);
 			detail = new ErrorDetail(field, APIConstants.EMPTY_ACCOUNT_NO_MSG);
 		} else {
@@ -72,7 +71,7 @@ public class FundTransferValidator extends BeanValidator{
 	private ErrorDetail validateAmount(String field, String amount) {
 		ErrorDetail detail = null;
 		
-		if(!APIUtil.stringNullCheck(amount)) {
+		if(!APIUtil.isStringPopulated(amount)) {
 			detail = new ErrorDetail(field, APIConstants.EMPTY_AMOUNT_MSG);
 		} else {
 			Matcher match = AMOUNT_PATTERN.matcher(amount.replaceAll(",", ""));

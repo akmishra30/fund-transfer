@@ -76,10 +76,12 @@ public class H2DBRepository extends RepositoryFactory{
 		finally {
 			try {
 				if(connection != null) {
-					connection.close();
+					try {
+						connection.close();
+					} catch (SQLException e) {
+						logger.error("Error closing connection in dbSchemaSetup", e);
+					}
 				}
-			} catch (SQLException e) {
-				e.printStackTrace();
 			}
 		}
 	}
