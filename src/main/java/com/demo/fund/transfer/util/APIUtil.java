@@ -18,18 +18,15 @@ public class APIUtil {
 	
 	public static String getTransactionIdFromMDC() {
 		String transactionID = MDC.get(APIConstants.KEY_TRAN_ID);
-		return !stringNullCheck(transactionID) ? transactionID : UUID.randomUUID().toString();
+		return isStringPopulated(transactionID) ? transactionID : UUID.randomUUID().toString();
 	}
 	
 	public static void putTransactionIdInMDC(String transactionId) {
 		MDC.put(APIConstants.KEY_TRAN_ID, transactionId);
 	}
 	
-	public static boolean stringNullCheck(String value) {
-		if(null != value && "" != value) {
-			return true;
-		} else
-			return false;
+	public static boolean isStringPopulated(String value) {
+    return value != null && !value.isEmpty();
 	}
 	
 	public static void closeDbObjects(Connection conn, PreparedStatement stmt, ResultSet resultSet) {

@@ -26,7 +26,7 @@ public class FundTransferServiceImpl implements FundTransferService{
 	
 	private static final String DB_TYPE = PropertyReader.getPropertyKeyValue("fund.transfer.default.db", DBConfig.H2_DB_TYPE);
 	
-	private AccountRepository  accuntRepository;
+	private AccountRepository  accountRepository;
 	
 	private CustomerRepository  customerRepository;
 	
@@ -35,7 +35,13 @@ public class FundTransferServiceImpl implements FundTransferService{
 	public FundTransferServiceImpl() {
 		logger.info("Setting up DB Repositories");
 		repositoryFactory = RepositoryFactory.getRepositoryFactory(DB_TYPE);
-		setAccuntRepository();
+
+		if (repositoryFactory == null) {
+			logger.error("Failed to initialize RepositoryFactory. It is null.");
+			throw new RuntimeException("Failed to initialize RepositoryFactory. Cannot proceed with FundTransferServiceImpl initialization.");
+		}
+
+		setAccountRepository();
 		setCustomerRepository();
 	}
 	
@@ -43,8 +49,8 @@ public class FundTransferServiceImpl implements FundTransferService{
 		return repositoryFactory;
 	}
 	
-	public void setAccuntRepository() {
-		this.accuntRepository = new AccountRepositoryImpl(repositoryFactory);
+	public void setAccountRepository() {
+		this.accountRepository = new AccountRepositoryImpl(repositoryFactory);
 	}
 	
 	public CustomerRepository getCustomerRepository() {
@@ -55,8 +61,8 @@ public class FundTransferServiceImpl implements FundTransferService{
 		this.customerRepository = new CustomerRepositoryImpl(repositoryFactory);
 	}
 	
-	public AccountRepository getAccuntRepository() {
-		return accuntRepository;
+	public AccountRepository getAccountRepository() {
+		return accountRepository;
 	}
 	
 	@Override
@@ -65,15 +71,15 @@ public class FundTransferServiceImpl implements FundTransferService{
 		
 		logger.info("Received request for fund transfer. {}", transfer);
 		
-		Account fromAccount = accuntRepository.getAccount(Long.parseLong(transfer.getFromAccount()));
+		Account fromAccount = accountRepository.getAccount(Long.parseLong(transfer.getFromAccount()));
 		
 		APIUtil.validateAccount(fromAccount, transfer.getFromAccount()); //validating debit account
 		
-		Account toAccount = accuntRepository.getAccount(Long.parseLong(transfer.getToAccount()));
+		Account toAccount = accountRepository.getAccount(Long.parseLong(transfer.getToAccount()));
 		
 		APIUtil.validateAccount(toAccount, transfer.getToAccount());  //validating credit account
 		
-		accuntRepository.fundTransfer(transfer);
+		accountRepository.fundTransfer(transfer);
 	
 		apiResponse = new APISuccess("Fund transfer has been successful.");
 			
@@ -88,7 +94,7 @@ public class FundTransferServiceImpl implements FundTransferService{
 		
 		logger.info("Newly created customer information: {}", customer);
 		
-		Account account = accuntRepository.createAccount(
+		Account account = accountRepository.createAccount(
 				new Account(
 						customer.getCustomerId(), 
 						new BigDecimal(accountRequest.getInitialDeposit()), 

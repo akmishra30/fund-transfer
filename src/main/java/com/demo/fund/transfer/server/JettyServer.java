@@ -61,7 +61,10 @@ public class JettyServer {
 		}
 		
 		finally {
-			server.destroy();
+			if (server != null) {
+				logger.info("Destroying Jetty server...");
+				server.destroy();
+			}
 		}
 	}
 }
